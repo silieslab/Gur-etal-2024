@@ -1,0 +1,36 @@
+PARAMS	32																							
+EPOCHS	24																							
+MAXRUNTIME	12000																							
+STIMULUSDATAPATH	NULL																							
+Stimulus.stimtype	11	57	57	57	57	11	57	57	57	57	11	57	57	57	57	11	57	57	57	57	11	57	11	57
+Stimulus.lum	0	0.5	0.5	0.5	0.5	0	0.5	0.5	0.5	0.5	0	0.5	0.5	0.5	0.5	0	0.5	0.5	0.5	0.5	0	0.5	0	0.5
+Stimulus.contrast	0	1	1	1	1	0	1	1	1	1	0	1	1	1	1	0	1	1	1	1	0	1	0	1
+Stimulus.duration	3	2	1	1	1	3	2	1	1	1	3	1	1	1	2	3	1	1	1	2	3	5	3	5
+Stimulus.transgain	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rotgain	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.trans.mean	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.trans.amp	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.trans.per	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.trans.phase	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rot.mean	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rot.amp	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rot.per	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rot.phase	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimtrans.mean	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimtrans.amp	0	6	8	10	12	0	6	4	2	0	0	-6	-4	-2	0	0	18	16	14	12	0	12	0	0
+Stimulus.stimtrans.per	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimtrans.phase	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimtrans2.amp	0	6	8	10	12	0	6	4	2	0	0	-6	-4	-2	0	0	18	16	14	12	0	0	0	0
+Stimulus.stimrot.mean	0	90	90	90	90	0	90	90	90	90	0	90	90	90	90	0	90	90	90	90	0	90	0	90
+Stimulus.stimrot.amp	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimrot.per	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimrot.phase	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.spacing	120	4	8	12	16	120	4	8	12	16	120	4	8	12	16	120	4	8	12	16	120	16	120	16
+Stimulus.density	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.tau	3	2	1	1	1	3	2	1	1	1	3	1	1	1	2	3	1	1	1	2	1	5	3	5
+Stimulus.arenasize	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.arenaheight	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.tau2	3	2	1	1	1	3	2	1	1	1	3	2	1	1	2	3	1	1	1	2	1	5	3	5
+Stimulus.randomize	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.spacing2	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+Stimulus.USEFRUSTUM	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1

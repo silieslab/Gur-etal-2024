@@ -1,0 +1,34 @@
+PARAMS	30					
+EPOCHS	6					
+MAXRUNTIME	12000					
+STIMULUSDATAPATH	NULL					
+Stimulus.stimtype	11	50	50	50	50	50
+Stimulus.lum	0	0.7	0.56	0.42	0.28	0.14
+Stimulus.contrast	0	-0.428571428571429	-0.428571428571429	-0.428571428571429	-0.428571428571429	-0.428571428571429
+Stimulus.duration	2	5	5	5	5	5
+Stimulus.transgain	0	0	0	0	0	0
+Stimulus.rotgain	0	0	0	0	0	0
+Stimulus.trans.mean	0	0	0	0	0	0
+Stimulus.trans.amp	0	0	0	0	0	0
+Stimulus.trans.per	0	0	0	0	0	0
+Stimulus.trans.phase	0	0	0	0	0	0
+Stimulus.rot.mean	0	0	0	0	0	0
+Stimulus.rot.amp	0	0	0	0	0	0
+Stimulus.rot.per	0	0	0	0	0	0
+Stimulus.rot.phase	0	0	0	0	0	0
+Stimulus.stimtrans.mean	0	20	20	20	20	20
+Stimulus.stimtrans.amp	0	-95	-95	-95	-95	-95
+Stimulus.stimtrans.per	0	0	0	0	0	0
+Stimulus.stimtrans.phase	0	0	0	0	0	0
+Stimulus.stimrot.mean	0	90	90	90	90	90
+Stimulus.stimrot.amp	0	0	0	0	0	0
+Stimulus.stimrot.per	0	0	0	0	0	0
+Stimulus.stimrot.phase	0	0	0	0	0	0
+Stimulus.spacing	120	80	80	80	80	80
+Stimulus.density	0	0	0	0	0	0
+Stimulus.tau	2	8	8	8	8	8
+Stimulus.arenasize	0	0	0	0	0	0
+Stimulus.arenaheight	0	0	0	0	0	0
+Stimulus.tau2	0	0	0	0	0	0
+Stimulus.randomize	1	1	1	1	1	1
+Stimulus.USEFRUSTUM	1	1	1	1	1	1

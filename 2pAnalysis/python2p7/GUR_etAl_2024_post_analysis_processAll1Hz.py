@@ -28,6 +28,8 @@ load_path = open(load_path, 'rb')
 lam_med = cPickle.load(load_path)
 
 lam_med_df = lam_med['df'][['slope','flyID','Geno']]
+lam_med_tunings = lam_med['tunings']
+
 
 
 # Tm9 GluCl
@@ -36,6 +38,8 @@ load_path = open(load_path, 'rb')
 tm9glucl = cPickle.load(load_path)
 
 tm9glucl_df = tm9glucl['df'][['slope','flyID','Geno']]
+tm9glucl_tunings = lam_med['tunings']
+
 
 # Tm1 GluCl
 load_path = os.path.join(data_dir, 'Tm1GluCl-sineGratings-real_lum_vals_rel0p5.pickle')
@@ -43,6 +47,7 @@ load_path = open(load_path, 'rb')
 tm1glucl = cPickle.load(load_path)
 
 tm1glucl_df = tm1glucl['df'][['slope','flyID','Geno']]
+tm1glucl_tunings = lam_med['tunings']
 
 
 # Tm1 iGlu
@@ -51,6 +56,7 @@ load_path = open(load_path, 'rb')
 tm1iglu = cPickle.load(load_path)
 
 tm1iglu_df = tm1iglu['df'][['slope','flyID','Geno']]
+tm1iglu_tunings = lam_med['tunings']
 
 # T45 data
 load_path = os.path.join(data_dir, 'T45-sineGratings-real_lum_vals-rel0p4.pickle')
@@ -58,6 +64,7 @@ load_path = open(load_path, 'rb')
 t45 = cPickle.load(load_path)
 t45['df']['Geno'] = np.array(np.tile("T45",t45['df'].shape[0]))
 t45_df = t45['df'][['slope','flyID','Geno']]
+t45_tunings = lam_med['tunings']
 
 # Tm9iGlu
 load_path = os.path.join(data_dir, 'Tm9iGluSnfr-sineGratings-real_lum_vals_rel0p3.pickle')
@@ -65,7 +72,47 @@ load_path = open(load_path, 'rb')
 tm9iGlu = cPickle.load(load_path)
 tm9iGlu['df']['Geno'] = np.array(np.tile("9Glu",tm9iGlu['df'].shape[0]))
 tm9iGlu_df = tm9iGlu['df'][['slope','flyID','Geno']]
+tm9iGlu_tunings = lam_med['tunings']
 
+#%% Recalculate slopes (for log-luminance values)
+# Luminance values
+input_lum_vals = np.array([0.0625, 0.125,  0.25,   0.375,  0.5])
+measurements_f = '.../Data_code/code/2pAnalysis/luminance_measurements/210716_Ultima_Luminances_ONOFFpaper.xlsx' # Enter the path to luminance data
+measurement_df = pd.read_excel(measurements_f,header=0)
+res = linregress(measurement_df['file_lum'], measurement_df['measured'])
+candelas = res.intercept + res.slope*input_lum_vals
+luminances_photon = pac.convert_cd_to_photons(cdVal=candelas,wavelength=475)
+diff_luminances_Ultima = luminances_photon
+        
+measurements_f = '.../Data_code/code/2pAnalysis/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx' # Enter the path to luminance data
+measurement_df = pd.read_excel(measurements_f,header=0)
+res = linregress(measurement_df['file_lum'], measurement_df['measured'])
+candelas = res.intercept + res.slope*input_lum_vals
+luminances_photon = pac.convert_cd_to_photons(cdVal=candelas,wavelength=475)
+diff_luminances_Investigator = luminances_photon
+
+
+# Perform linear regression for all variables that contain "_tunings" in log lum scale
+for data_name in ["tm9iGlu_tunings", "t45_tunings", "lam_med_tunings", "tm9glucl_tunings", "tm1glucl_tunings", "tm1iglu_tunings"]:
+    if data_name in ["tm1iglu_tunings", "tm9glucl_tunings", "tm1glucl_tunings"]:
+        diff_luminances = diff_luminances_Ultima
+    else:
+        diff_luminances = diff_luminances_Investigator
+    data_n = data_name[:data_name.rfind("_")]
+    
+    x = np.log10(diff_luminances)
+    curr_tunings = eval(data_name)
+    curr_tunings= curr_tunings/curr_tunings.max(axis=1)[:,np.newaxis] # Normalization
+    for idx, roi_tuning in enumerate(curr_tunings):
+        y = roi_tuning
+        
+        reg_data = linregress(x, y)
+        eval('{data_n}_df'.format(data_n=data_n))['slope'].iloc[idx] =  reg_data.slope # Change to python 2
+        # if reg_data.rvalue > 0.5:
+        #     eval(f'{data_n}_df')['slope'].iloc[idx] =  reg_data.slope
+        # else:
+        #     eval(f'{data_n}_df')['slope'].iloc[idx] =  np.nan
+    
 #%% Combine data
 combined_tuning = np.concatenate((tm9iGlu['tunings'], t45['tunings'],lam_med['tunings'],tm9glucl['tunings'],tm1glucl['tunings'],tm1iglu['tunings']))
 combined_df = pd.concat([tm9iGlu_df, t45_df, lam_med_df, tm9glucl_df, tm1glucl_df,tm1iglu_df])

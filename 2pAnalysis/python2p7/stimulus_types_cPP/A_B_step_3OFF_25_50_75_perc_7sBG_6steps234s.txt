@@ -1,0 +1,37 @@
+PARAMS	33																		
+EPOCHS	19																		
+MAXRUNTIME	12000																		
+STIMULUSDATAPATH	NULL																		
+Stimulus.stimtype	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11	11
+Stimulus.lum	1	0.65625	0.5625	0.46875	0.375	0.28125	0.1875	0.56249999859375	0.4821428559375	0.40178571328125	0.321428570625	0.24107142796875	0.1607142853125	0.468749998828125	0.40178571328125	0.334821427734375	0.2678571421875	0.200892856640625	0.13392857109375
+Stimulus.contrast	0	0.14285714	0.14285714	0.14285714	0.14285714	0.14285714	0.14285714	0.33333333	0.33333333	0.33333333	0.33333333	0.33333333	0.33333333	0.6	0.6	0.6	0.6	0.6	0.6
+Stimulus.duration	7	6	6	6	6	6	6	6	6	6	6	6	6	6	6	6	6	6	6
+Stimulus.transgain	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rotgain	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.trans.mean	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.trans.amp	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.trans.per	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.trans.phase	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rot.mean	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rot.amp	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rot.per	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.rot.phase	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimtrans.mean	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimtrans.amp	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimtrans.per	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimtrans.phase	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimrot.mean	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimrot.amp	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimrot.per	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.stimrot.phase	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.spacing	120	120	120	120	120	120	120	120	120	120	120	120	120	120	120	120	120	120	120
+Stimulus.density	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.tau	7	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+Stimulus.arenasize	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.arenaheight	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.tau2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.spacing2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.x_center	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.y_center	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Stimulus.USEFRUSTUM	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+Stimulus.randomize	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1

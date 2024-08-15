@@ -30,9 +30,9 @@ results_save_dir = os.path.join(initialDirectory,'FigureS4/plots')
 
 
 # %% Load datasets and desired variables
-# exp_folder = 'Tm1iGluSnFR' # Change thresholds below, according to manuscript methods part
-exp_folder = 'Tm9iGluSnFR' # Change thresholds below, according to manuscript methods part
-# exp_folder = 'L2-L3-TmX-edges-1Hzsine-11steps' # Change thresholds below, according to manuscript methods part
+# exp_folder = 'Tm1iGluSnFR' # Change thresholds below, according to manuscript methods part Threshold 0.003
+exp_folder = 'Tm9iGluSnFR' # Change thresholds below, according to manuscript methods part Threshold 0.005
+# exp_folder = 'L2-L3-TmX-edges-1Hzsine-11steps' # Change thresholds below, according to manuscript methods part Threshold 0.005
 
 
 
@@ -60,7 +60,9 @@ for idataset, dataset in enumerate(datasets_to_load):
     print(curr_rois[0].experiment_info['Genotype'])
     print(curr_rois[0].stim_name)
     
-    final_rois_all = np.append(final_rois_all,np.array(workspace['final_rois']))
+    for roi in curr_rois: # Only for Tm1iGluSnFR experiments
+        roi.sta = np.squeeze(roi.sta)
+    final_rois_all = np.append(final_rois_all,np.array(curr_rois))
     geno = curr_rois[0].experiment_info['Genotype']
    
     for roi in curr_rois:
@@ -101,7 +103,7 @@ for idx,genotype in enumerate(np.unique(genotypes)):
     
 #%% Avg STRFs OFF NEURONS
 
-threshold = 0.005
+threshold = 0.005 # Change threshold here
 _, colors_d = pac.run_matplotlib_params()
 colors = [colors_d['green2'],colors_d['magenta'],colors_d['green1']]
 for genotype in np.unique(genotypes):
@@ -117,6 +119,8 @@ for genotype in np.unique(genotypes):
                      curr_rois))
         
     filter_masks =np.abs(curr_filters).max(axis=2)>threshold
+
+    # Below for Tm1iGluSnFR
     # filter_masks =(np.abs(curr_filters).max(axis=2)/np.mean(curr_filters,axis=2))>10
     # filter_masks2 =np.abs(curr_filters).max(axis=2)>threshold
     # filter_masks = filter_masks *filter_masks2
@@ -230,144 +234,3 @@ for genotype in np.unique(genotypes):
     os.chdir(results_save_dir)
     fig1.savefig('%s.pdf'% f1_n, bbox_inches='tight',
                 transparent=False,dpi=300)
-#%% ON neurons
-
-threshold = 0.005
-_, colors_d = pac.run_matplotlib_params()
-colors = [colors_d['green2'],colors_d['magenta'],colors_d['green1']]
-for genotype in np.unique(genotypes):
-    plt.close('all')
-    fig1 = plt.figure(figsize=(10, 3))
-    grid = plt.GridSpec(1, 3, wspace=0.4, hspace=0.4)
-    
-    ax = plt.subplot(grid[0,0])
-    mask = genotypes == genotype
-    curr_rois = final_rois_all[mask]
-        # Change here if cell is OFF or ON (change the roi.sta.min or max)
-
-    curr_filters = np.array(map(lambda roi : \
-                                       roi.sta.T[np.where(roi.sta.T==roi.sta.max ())[0]],
-                     curr_rois))
-        
-    filter_masks =np.abs(curr_filters).max(axis=2)>threshold
-    
-    curr_fly_ids = np.array(flyIDs)[mask]
-    curr_fly_filtered = curr_fly_ids[np.array( filter_masks[:,0])]
-    curr_rois_filtered = curr_rois[np.array( filter_masks[:,0])]
-    curr_filters_filtered = curr_filters[filter_masks]
-    
-    # Change here if cell is OFF or ON (change the roi.sta.min or max)
-    mean_strf = np.mean(np.array(map(lambda roi : \
-                 np.roll(roi.sta.T, roi.sta.T.shape[0]/2- \
-                         int(np.where(roi.sta.T==roi.sta.max())[0]), axis=0),
-                     curr_rois_filtered)),axis=0)
-        
-    sns.heatmap(mean_strf, cmap='coolwarm', ax=ax,center=0,cbar=False)
-    ax.axis('off')
-    ax.set_title(genotype,fontsize='xx-small') 
-    
-    ax2 = plt.subplot(grid[0,1])
-      
-    mean = np.mean(curr_filters_filtered,axis=0).T
-    # mean = (mean-mean.min())/(mean.max() - mean.min())
-    # mean = (mean)/(mean.max())
-    error = np.std(curr_filters_filtered,axis=0).T / np.sqrt(curr_filters_filtered.shape[0])
-    
-    label = "{l}, {f} {ROI}".format(l=genotype,
-                                    f=len(np.unique(curr_fly_filtered)),
-                                    ROI = curr_filters_filtered.shape[0])
-    
-    ub = mean + error
-    lb = mean - error
-    t_trace = np.linspace(-len(mean),0,len(mean))*50/1000
-    ax2.plot(t_trace,mean,alpha=.8,lw=3,color='k',
-             label=label)
-    ax2.fill_between(t_trace, ub[:], lb[:], alpha=.4,color='k')
-    ax2.legend()
-    ax2.set_xlabel('Time(s)')
-    
-    max_idx = np.argmax(np.abs(mean))
-    ax3 = plt.subplot(grid[0,2])
-    
-    mean = mean_strf[:,max_idx]
-    # mean = (mean-mean.min())/(mean.max() - mean.min())
-    # mean = (mean)/(mean.max())
-    # error = np.std(np.array(map(lambda roi : \
-    #              np.roll(roi.sta.T, roi.sta.T.shape[0]/2- \
-    #                      int(np.where(roi.sta.T==roi.sta.max())[0]), axis=0),
-    #                  curr_rois_filtered)),axis=0)[:,-1]
-        
-    label = "{l}, {f} {ROI}".format(l=genotype_labels[idx],
-                                    f=len(np.unique(curr_fly_filtered)),
-                                    ROI = curr_filters_filtered.shape[0])
-    
-    # ub = mean + error
-    # lb = mean - error
-    t_trace = np.linspace(-30,30,len(mean))
-    ax3.plot(t_trace,mean,alpha=.8,lw=3,color='r',
-             label=label)
-    
-    ax3.legend()
-    ax3.set_xlabel('Space(degrees)')
-    ax3.set_title('Spatial filter at max')
-    f1_n = 'Mean_STRFs_together_{t}threshold_{g}'.format(t=threshold,g=genotype)
-    os.chdir(results_save_dir)
-    fig1.savefig('%s.pdf'% f1_n, bbox_inches='tight')
-
-
-#%% Avg STRFs
-plt.close('all')
-fig1 = plt.figure(figsize=(16, 12))
-grid = plt.GridSpec(1,3, wspace=0.2, hspace=0.2)
-
-_, colors_d = pac.run_matplotlib_params()
-colors = [colors_d['green2'],colors_d['magenta'],colors_d['green1']]
-for idx,genotype in enumerate(np.unique(genotypes)):
-    ax = plt.subplot(grid[0,:2])
-    mask = genotypes == genotype
-    curr_rois = final_rois_all[mask]
-    curr_filters = np.array(map(lambda roi : \
-                                       roi.sta.T[np.where(roi.sta.T==roi.sta.max())[0]],
-                     curr_rois))
-        
-    filter_masks =np.abs(curr_filters).max(axis=2)>0.005
-    
-    curr_fly_ids = np.array(flyIDs)[mask]
-    curr_fly_filtered = curr_fly_ids[np.array( filter_masks[:,0])]
-    curr_rois_filtered = curr_rois[np.array( filter_masks[:,0])]
-    curr_filters_filtered = curr_filters[filter_masks]
-    mean_strf = np.mean(np.array(map(lambda roi : \
-                 np.roll(roi.sta.T, roi.sta.T.shape[0]/2- \
-                         int(np.where(roi.sta.T==roi.sta.max())[0]), axis=0),
-                     curr_rois_filtered)),axis=0)
-    sns.heatmap(mean_strf, cmap='coolwarm', ax=ax,center=0,cbar=False)
-    ax.axis('off')
-    ax.set_title(genotype,fontsize='xx-small')
-    
-    ax2 = plt.subplot(grid[0,2])
-    
-    mean = np.mean(curr_filters_filtered,axis=0).T
-    # mean = (mean-mean.min())/(mean.max() - mean.min())
-    # mean = (mean)/(mean.max())
-    error = np.std(curr_filters_filtered,axis=0).T / np.sqrt(curr_filters_filtered.shape[0])
-    
-    label = "{l}, {f} {ROI}".format(l=genotype_labels[idx],
-                                    f=len(np.unique(curr_fly_filtered)),
-                                    ROI = curr_filters_filtered.shape[0])
-    
-    ub = mean + error
-    lb = mean - error
-    t_trace = np.linspace(-len(mean),0,len(mean))*50/1000
-    ax2.plot(t_trace,mean,alpha=.8,lw=3,color='k',
-             label=label)
-    ax2.fill_between(t_trace, ub[:], lb[:], alpha=.4,color='k')
-    
-    ax2.legend()
-    ax2.set_xlabel('Time(s)')
-f1_n = 'Mean_STRFs_together_0p03threshold'
-os.chdir(results_save_dir)
-fig1.savefig('%s.pdf'% f1_n, bbox_inches='tight',
-            transparent=False,dpi=300)
-    
-    
-# %%

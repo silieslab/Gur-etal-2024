@@ -1,0 +1,41 @@
+PARAMS	37
+EPOCHS	2
+MAXRUNTIME	36000
+STIMULUSDATAPATH	C:\\JL_stimulusData\\StimulusData_Discrete_1_12_100000_Seed_735723.mat
+Stimulus.stimtype	11	1000
+Stimulus.lum	0.5	0.5
+Stimulus.contrast	0	0
+Stimulus.duration	3	500
+Stimulus.transgain	0	0
+Stimulus.rotgain	0	0
+Stimulus.trans.mean	0	0
+Stimulus.trans.amp	0	0
+Stimulus.trans.per	0	0
+Stimulus.trans.phase	0	0
+Stimulus.rot.mean	0	0
+Stimulus.rot.amp	0	0
+Stimulus.rot.per	0	0
+Stimulus.rot.phase	0	0
+Stimulus.stimtrans.mean	0	0
+Stimulus.stimtrans.amp	0	60
+Stimulus.stimtrans.per	0	5
+Stimulus.stimtrans.phase	0	0
+Stimulus.stimtrans2.mean	0	0
+Stimulus.stimtrans2.amp	0	0
+Stimulus.stimtrans2.per	0	0
+Stimulus.stimtrans2.phase	0	0
+Stimulus.stimrot.mean	0	90
+Stimulus.stimrot.amp	0	0
+Stimulus.stimrot.per	0	0
+Stimulus.stimrot.phase	0	0
+Stimulus.spacing	120	0
+Stimulus.density	0	0
+Stimulus.tau	3	0.05
+Stimulus.arenasize	0	0
+Stimulus.arenaheight	0	0
+Stimulus.tau2	0	0
+Stimulus.spacing2	0	0
+Stimulus.x_center	0	0
+Stimulus.y_center	0	0
+Stimulus.USEFRUSTUM	1	1
+Stimulus.randomize	1	1

@@ -11,6 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from sklearn import preprocessing
+from scipy.stats import linregress
+
 
 # Change to code folder
 os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
@@ -28,12 +30,16 @@ load_path = open(load_path, 'rb')
 l2 = cPickle.load(load_path)
 
 l2_df = l2['df'][['slope','flyID','Geno']]
+l2_tunings = l2['tunings']
+
 
 load_path = os.path.join(data_dir, 'L3_-edges-real_lum_vals_rel0p5_maxt_0p3.pickle')
 load_path = open(load_path, 'rb')
 l3 = cPickle.load(load_path)
 
 l3_df = l3['df'][['slope','flyID','Geno']]
+l3_tunings = l3['tunings']
+
 
 
 # T4T5
@@ -42,8 +48,29 @@ load_path = open(load_path, 'rb')
 t4t5 = cPickle.load(load_path)
 
 t4t5_df = t4t5['df'][['slope','flyID','Geno']]
+t4t5_tunings = t4t5['tunings']
 
 
+#%% Recalculate slopes
+# Perform linear regression for all variables that contain "_tunings" in log lum scale
+for data_name in ["t4t5_tunings", "l3_tunings", "l2_tunings"]:
+    data_n = data_name[:data_name.rfind("_")]
+    
+    diff_luminances = eval(data_n)['luminances']
+    x = np.log10(diff_luminances)
+    curr_tunings = eval(data_name)
+    curr_tunings= curr_tunings/curr_tunings.max(axis=1)[:,np.newaxis] # Normalization
+    for idx, roi_tuning in enumerate(curr_tunings):
+        y = roi_tuning
+        
+        reg_data = linregress(x, y)
+        eval('{data_n}_df'.format(data_n=data_n))['slope'].iloc[idx] =  reg_data.slope
+        # if reg_data.rvalue > 0.5:
+        #     eval(f'{data_n}_df')['slope'].iloc[idx] =  reg_data.slope
+        # else:
+        #     eval(f'{data_n}_df')['slope'].iloc[idx] =  np.nan
+    
+    
 #%% Combine data
 combined_tuning = np.concatenate((l2['tunings'], l3['tunings'],t4t5['tunings']))
 combined_df = pd.concat([l2_df, l3_df, t4t5_df])
