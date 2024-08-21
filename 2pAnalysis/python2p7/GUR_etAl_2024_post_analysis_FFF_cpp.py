@@ -14,13 +14,12 @@ import warnings
 
 
 #change to code directory
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import post_analysis_core as pac
 import ROI_mod
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
 
 results_save_dir = os.path.join(initialDirectory, 'FigureS4','plots')

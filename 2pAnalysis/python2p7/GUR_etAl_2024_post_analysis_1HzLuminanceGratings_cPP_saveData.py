@@ -14,20 +14,19 @@ from sklearn import preprocessing
 from scipy import stats
 
 #change to code directory
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import ROI_mod
 import post_analysis_core as pac
 
 
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
 
 #%% Luminance values of the experimental setup (ADJUST THE PATHS)
 # Values from the stimulation paradigm
-measurements_f = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx'
+measurements_f = '.../Gur-etal-2024/2pAnalysis/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx'
 measurement_df = pd.read_excel(measurements_f,header=0)
 res = linregress(measurement_df['file_lum'], measurement_df['measured'])
 # %% Load datasets and desired variables

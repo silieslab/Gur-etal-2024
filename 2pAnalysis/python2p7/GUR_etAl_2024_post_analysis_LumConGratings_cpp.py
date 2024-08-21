@@ -20,19 +20,18 @@ import seaborn as sns
 
 
 #change to code directory
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import ROI_mod
 import post_analysis_core as pac
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
 
 results_save_dir = os.path.join(initialDirectory, 'Figure2','plots','5cont_5lum')
 #%% Luminance values of the experimental setup (ADJUST THE PATHS)
 # Values from the stimulation paradigm
-measurements_f = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx'
+measurements_f = '.../Gur-etal-2024/2pAnalysis/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx'
 measurement_df = pd.read_excel(measurements_f,header=0)
 res = linregress(measurement_df['file_lum'], measurement_df['measured'])
 # %% Load datasets and desired variables
@@ -154,6 +153,7 @@ for geno in np.unique(combined_df['Geno']):
     all_powers = []
     all_luminances = []
     all_contrasts = []
+    all_fly_means = []
 
     
     for contrast in np.unique(curr_rois[0].contrasts):
@@ -179,13 +179,17 @@ for geno in np.unique(combined_df['Geno']):
                                         vmax=1.2)
 
         label = 'c: {c}'.format(c = contrast)
+        curr_fly_means = np.array(a['experiment_ids'][geno]['over_samples_means'])
         all_mean_data = a['experiment_ids'][geno]['over_groups_mean']
         all_yerr = a['experiment_ids'][geno]['over_groups_error']
         ax1.errorbar(diff_luminances,all_mean_data,all_yerr,
                     fmt='-s',alpha=1,color=cmap(norm(contrast)),label=label)
         
         all_powers = np.concatenate((all_powers,all_mean_data))
-
+        if len(all_fly_means) == 0:
+                all_fly_means = curr_fly_means[:,:, np.newaxis]
+        else:
+            all_fly_means = np.concatenate((all_fly_means,curr_fly_means[:,:, np.newaxis]), axis=2)
         all_luminances = np.concatenate((all_luminances,diff_luminances))
         all_contrasts = np.concatenate((all_contrasts,np.repeat(contrast,5)))
     # Saving figure
@@ -258,6 +262,20 @@ for geno in np.unique(combined_df['Geno']):
     save_name = 'Summary_Norm_CL_Image_{geno}_{figadd}_AT' .format(geno=geno,figadd=fig_addition)
     os.chdir(results_save_dir)
     fig.savefig('%s.pdf' % save_name, bbox_inches='tight')
+
+    data_to_save = {'all_fly_means': all_fly_means, 
+                'luminances': diff_luminances,
+                'contrast': np.unique(curr_rois[0].contrasts),
+                'genotype': geno}
+
+
+    # Save for further analysis (ANOVA etc.)
+    # Specify the file path where you want to save the pickle file
+    file_path = os.path.join(results_save_dir, f"{geno}_AT_ConLum.pickle") # change f string to python 2.7 format if necessary
+
+    # Open the file in binary write mode
+    with open(file_path, 'wb') as file:
+        cPickle.dump(data_to_save, file)
 #%% Summary figure per genotype contrast responses
 
 for geno in np.unique(combined_df['Geno']):

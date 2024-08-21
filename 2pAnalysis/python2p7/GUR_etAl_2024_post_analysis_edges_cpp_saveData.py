@@ -21,18 +21,17 @@ from sklearn import preprocessing
 from scipy import ndimage
 from scipy import stats
 #change to code directory
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import ROI_mod
 import post_analysis_core as pac
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
-
+results_save_dir = "save_path"
 #%% Luminance values of the experimental setup (ADJUST THE PATHS)
 # Values from the stimulation paradigm
-measurements_f = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx'
+measurements_f = '.../Gur-etal-2024/2pAnalysis/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx'
 measurement_df = pd.read_excel(measurements_f,header=0)
 res = linregress(measurement_df['file_lum'], measurement_df['measured'])
 
@@ -63,9 +62,7 @@ polarity_dict={'Mi1' : 'ON','Tm9' : 'OFF','Mi4' : 'ON',
          'Tm3' : 'ON'}
 
 plot_only_cat = True
-cat_dict={
-        #  'L1_' : 'M1',
-         'Tm3' : 'M9'}
+cat_dict={}
 for idataset, dataset in enumerate(datasets_to_load):
     if not(dataset.split('.')[-1] =='pickle'):
         warnings.warn('Skipping non pickle file: {f}\n'.format(f=dataset))
@@ -84,23 +81,14 @@ for idataset, dataset in enumerate(datasets_to_load):
 
     curr_rois = ROI_mod.analyze_luminance_edges(curr_rois)
     curr_rois = ROI_mod.find_edge_resp_decay(curr_rois)
-    
-    if 'ON' in curr_rois[0].stim_name:
-        continue
-        curr_stim_type ='ON'
-        
-    elif 'OFF' in curr_rois[0].stim_name:
-        curr_stim_type ='OFF'
+    curr_stim_type ='OFF'
     
     
     geno = curr_rois[0].experiment_info['Genotype'][:3]
-    # geno = curr_rois[0].experiment_info['Genotype']
-    # if geno == '"ctr_dSNR-L3"':
-    #     geno = "ctr_dSNR-L3"
+
     if curr_rois[0].experiment_info['Genotype'] == 'R64G09-Recomb-Homo':
         continue
-    # if (geno !='L1_'):
-        # continue
+
     # Thresholding might be needed for good ROIs
     
     curr_rois = ROI_mod.threshold_ROIs(curr_rois, {'reliability' : 0.5,
@@ -119,13 +107,10 @@ for idataset, dataset in enumerate(datasets_to_load):
         curr_tunings = roi.edge_resps/roi.edge_resps.max()
         roi.slope = linregress(diff_luminances, np.transpose(curr_tunings))[0]
 
-        
-
     all_rois.append(curr_rois)
     data_to_extract = ['SNR','reliability','slope','category', 'decay_strength']
     roi_data = ROI_mod.data_to_list(curr_rois, data_to_extract)
     
-    # There is just one ROI with 3Hz so discard that one
     
     curr_tuning = np.squeeze\
                    (list(map(lambda roi: roi.edge_resps,curr_rois)))
@@ -364,12 +349,6 @@ for idx, geno in enumerate(np.unique(combined_df['Geno'])):
     ax3.set_ylim([0,0.000004])
     plt.legend()
     
-    
-    # ax3.set_title('Luminance sensitivity')  
-
-    # bins_list = np.linspace(-7e-06,7e-06,25)
-    # ax3.hist(curr_df['slope'],range=(-2,2),color=geno_color,bins=bins_list)
-    # ax3.set_xlabel('Slope')
     # Saving figure
     save_name = '_Edge_summary_100p_{st}_{geno}'.format(
                                                    st=curr_stim_type,

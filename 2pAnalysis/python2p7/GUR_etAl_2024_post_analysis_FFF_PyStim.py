@@ -8,12 +8,11 @@ import matplotlib.pyplot as plt
 import warnings
 import PyROI
 
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import post_analysis_core as pac
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
 
 results_save_dir = os.path.join(initialDirectory, 'FigureS4','plots')
@@ -27,8 +26,7 @@ datasets_to_load = os.listdir(data_dir)
 genotype_labels = 0
 
 select_cat_only = True
-cat_dict={
-         'Tm1' : 'M2'}
+cat_dict={}
 
 # datasets_to_load = os.listdir(data_dir)
 # Initialize variables

@@ -1,6 +1,6 @@
 # Gur et al. 2024 codebase
 
-Here you can find the code for analyzing the datasets of Gur et al. 2024. All data will be deposited to Zenodo as soon as the manuscript is published.
+Here you can find the code for analyzing the datasets of Gur et al. 2024. All datasets are deposited to Zenodo: https://zenodo.org/doi/10.5281/zenodo.13327244.
 
 ## Nat scenes and normalization model
 The code for analysis and simulations done for the natural scene analysis in Figure 3 and the biophysical implementation of the normalization model in Figure 5.
@@ -61,12 +61,13 @@ GUR_etAl_2024_post_analysis_edges_cpp_saveData.py
 #### 1Hz drifting gratings with 5 contrast and 5 luminance levels
 
 GUR_etAl_2024_post_analysis_LumConGratings_cpp.py (Figure 2, Figure S1)
-	- Analysis and plotting of responses of L1, L2, L3, Tm1, Tm9 neurons (directly produces final plots but 			without stats)
-		raw data: L2_L3_Tm1_Tm9_luminanceContrast (also has L1)
-
-GUR_etAl_2024_post_analysis_LumConGratings_cpp_saveData_python3 (Figure 2, Figure S1)
+	- Analysis and plotting of responses of L1, L2, L3, Tm1, Tm9 neurons (directly produces final plots but without stats)
 	- Saving processed data for stats 
 		raw data: L2_L3_Tm1_Tm9_luminanceContrast (also has L1)
+
+
+GUR_etAl_2024_post_analysis_ANOVA_contLum.py
+	- statistical testing of responses
  
 #### Periodic full field 5 second ON and OFF flashes 
 
@@ -122,7 +123,7 @@ Dm12>Dm12_stripes.m (receptive field mapping with OFF stripes)
 
 ### Dm12 optogenetics (Figure 7)
 
-Data and plots are found under processed_data/Dm12_Figure7_Mat_files//Dm12 optogenetics.
+Data and plots are found under processed_data/Dm12_Figure7_Mat_files//Dm12 optogenetics. Code for analysis can be found at: https://github.com/lgior/flylight/.
 
 
 ## FAFB EM dataset analysis (Figure 7)

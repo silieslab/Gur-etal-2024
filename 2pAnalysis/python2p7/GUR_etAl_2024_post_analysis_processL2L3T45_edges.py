@@ -15,11 +15,11 @@ from scipy.stats import linregress
 
 
 # Change to code folder
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import post_analysis_core as pac
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-main_dir = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
+main_dir = 'data_path'
 data_dir = os.path.join(main_dir,'Figure1','processed_data') # Change this to load your data of interest
 results_save_dir = os.path.join(main_dir,'Figure1/plots')
 #%% Load data

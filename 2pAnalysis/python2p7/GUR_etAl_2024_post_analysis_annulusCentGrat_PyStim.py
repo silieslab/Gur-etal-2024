@@ -1,4 +1,4 @@
-#%%
+#%% Analysis of Figure 4 in Gür et al. 2024: Centered drifting grating with constant contrast and luminance, with background annulus for online RF mapping and stimulation
 import cPickle
 import pandas as pd
 import numpy as np
@@ -6,24 +6,25 @@ import warnings
 import matplotlib.pyplot as plt
 import os
 from scipy.stats import linregress
+from sklearn import preprocessing
 
-os.chdir('/Users/burakgur/Documents/GitHub/python_lab/2p_calcium_imaging')
+# Change the directory to the path where the analysis functions are stored
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import PyROI
 import post_analysis_core as pac
 
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
 results_save_dir = os.path.join(initialDirectory,'Figure4/plots')
 
 #%% Luminance values of the experimental setup (ADJUST THE PATHS)
 # Values from the stimulation paradigm
-measurements_f = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/luminance_measurements/210716_Ultima_Luminances_ONOFFpaper.xlsx'
+measurements_f = '.../Gur-etal-2024/2pAnalysis/luminance_measurements/210716_Ultima_Luminances_ONOFFpaper.xlsx'
 measurement_df = pd.read_excel(measurements_f,header=0)
 res = linregress(measurement_df['file_lum'], measurement_df['measured'])
-#%%
+#%% Load the data and analyze
 exp_folder = 'SpatialPooling_Tm1_Tm9/annulusStim'
 data_dir = os.path.join(all_data_dir,exp_folder)
 datasets_to_load = os.listdir(data_dir)
@@ -62,7 +63,6 @@ for idataset, dataset in enumerate(datasets_to_load):
     # Thresholding
     # Reliability thresholding
     curr_rois = PyROI.calculateReliability(curr_rois)
-    # max power threshold is 0.015 for Tm1 iGluSnfr
     curr_rois = PyROI.threshold_ROIs(curr_rois, {'reliability':0.5})
 
     if not(curr_rois):
@@ -128,32 +128,6 @@ for roi_id, roi in enumerate(geno_rois):
         sorted_pow = curr_pows[np.argsort(curr_diams)]
         all_powers[idx,1:,roi_id] = sorted_pow
 
-        
-#%%  Power vs luminance in different sizes
-mean_powers = all_powers.mean(axis=2)
-error_powers = all_powers.std(axis=2)/np.sqrt(len(geno_rois))
-
-
-
-for idx, diam in enumerate(np.unique(np.sort(diameters))):
-    if diam == 5: #for power at mean
-            continue
-    curr_lums = real_lums[diam==diameters]
-    plt.errorbar(np.sort(curr_lums),mean_powers[[0,1,3,4],idx],error_powers[[0,1,3,4],idx],fmt='-o',color=[diam/diameters.max(), 0, 0],label='d:{s}'.format(s=str(diam)))
-# plt.axhline(y=powers[0.25==luminances], color='k', linestyle='--', label='lum:0.25')
-plt.legend()
-plt.title('{s}, {d} ROIs'.format(s=curr_geno,d= len(geno_rois)))
-plt.xlabel('luminance')
-plt.ylabel('Power at 1 Hz')
-plt.xscale('log')
-ax = plt.gca()
-# plt.xlim((10000,ax.get_xlim()[1]))
-
-fig1 = plt.gcf()#
-f1_n = 'CircCenter_DataSummary_Luminance%s' % (curr_geno)
-os.chdir(results_save_dir)
-fig1.savefig('%s.pdf'% f1_n, bbox_inches='tight',
-            transparent=False)
 #%% Power vs size
 mean_powers = all_powers.mean(axis=2)
 error_powers = all_powers.std(axis=2)/np.sqrt(len(geno_rois))
@@ -250,52 +224,3 @@ for roi_id, roi in enumerate(geno_rois):
     os.chdir(os.path.join(results_save_dir,"traces"))
     fig3.savefig('%s-%s.pdf'% (curr_geno,f3_n), bbox_inches='tight',
                 transparent=False)
-
- # %% Analysis of the mean response
-curr_geno = "Tm1_GC6f"
-# Tm9Rec_lexAopGC6f Tm1_GC6f
-geno_rois = all_rois[(combined_df['Geno'] ==curr_geno)]
-luminances = np.array(all_rois[0].BGcircle_luminance.values())
-diameters = np.array(all_rois[0].BGcircle_diameter.values())
-
-
-all_powers = np.zeros(shape=(len(np.unique(luminances)), len(np.unique(diameters)), len(geno_rois) ))
-
-for roi_id, roi in enumerate(geno_rois):
-    luminances = np.array(roi.BGcircle_luminance.values())
-    diameters = np.array(roi.BGcircle_diameter.values())
-    powers = np.array(roi.mean_resp.values())
-    for idx, luminance in enumerate(np.unique(np.sort(luminances))):
-
-        if luminance == 0.25: #for power at mean
-            curr_pow = powers[luminance==luminances]
-            all_powers[:,0,roi_id] = curr_pow
-            continue
-        curr_diams = diameters[luminance==luminances]
-        curr_pows = powers[luminance==luminances]
-
-        sorted_pow = curr_pows[np.argsort(curr_diams)]
-        all_powers[idx,1:,roi_id] = sorted_pow
-
-        
-#%%
-mean_powers = all_powers.mean(axis=2)
-error_powers = all_powers.std(axis=2)/np.sqrt(len(geno_rois))
-for idx, luminance in enumerate(np.unique(np.sort(luminances))):
-    if luminance == 0.25: #for power at mean
-            continue
-    curr_diams = diameters[luminance==luminances]
-    curr_diams = np.insert(curr_diams,0,5)
-    plt.errorbar(np.sort(curr_diams),mean_powers[idx,:],error_powers[idx,:],color=[2*luminance, 0, 0],label='lum:{s}'.format(s=str(luminance)))
-# plt.axhline(y=powers[0.25==luminances], color='k', linestyle='--', label='lum:0.25')
-plt.legend()
-plt.title('{s}, {d} ROIs'.format(s=curr_geno,d= len(geno_rois)))
-plt.xlabel('BG circle size')
-plt.ylabel('Mean response')
-fig1 = plt.gcf()#
-f1_n = 'CircCenter_Mean_resp_DataSummary_%s' % (curr_geno)
-os.chdir(results_save_dir)
-fig1.savefig('%s.pdf'% f1_n, bbox_inches='tight',
-            transparent=False)
-
-# %%

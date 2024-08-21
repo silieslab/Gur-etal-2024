@@ -17,19 +17,18 @@ from sklearn import preprocessing
 from scipy import stats
 
 #change to code directory
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import PyROI
 import post_analysis_core as pac
 
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
 
 #%% Luminance values of the experimental setup (ADJUST THE PATHS)
 # Values from the stimulation paradigm
-measurements_f = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/luminance_measurements/210716_Ultima_Luminances_ONOFFpaper.xlsx'
+measurements_f = '.../Gur-etal-2024/2pAnalysis/luminance_measurements/210716_Ultima_Luminances_ONOFFpaper.xlsx'
 measurement_df = pd.read_excel(measurements_f,header=0)
 res = linregress(measurement_df['file_lum'], measurement_df['measured'])
 # %% Load datasets and desired variables
@@ -121,61 +120,6 @@ for idataset, dataset in enumerate(datasets_to_load):
     depths = list(map(lambda roi : roi.imaging_info['depth'], curr_rois))
     
     df_c = {}
-
-    # RF
-    if curr_rois[0].__dict__.has_key('rf_image_id'):
-        rf_load_path = os.path.join(data_dir, curr_rois[0].rf_image_id)
-        if rf_load_path.split('.')[-1] != 'pickle':
-            rf_load_path = '{s}.pickle'.format(s=rf_load_path)
-        rf_file = open(rf_load_path, 'rb')
-        rf_workspace = cPickle.load(rf_file)
-        rf_rois = rf_workspace['final_rois']
-
-        if len(curr_rois) != len(rf_rois):
-            print('ROI numbers do not match with RF rois')
-            
-
-        # Transfer RF data
-        for roi in curr_rois:
-            roi.rf_transfer_worked = False
-            roi.rf_max_idx = np.nan
-            roi.rf_fit_max_idx = np.nan
-            roi.distance_to_center = np.nan
-            roi.rf_fit_rsq = np.nan
-            for rf_roi in rf_rois:
-                if roi.number_id == rf_roi.number_id:
-                    roi.rf_transfer_worked = True
-
-                    roi.rf_fit = rf_roi.rf_fit.copy()
-                    roi.rf_fit_rsq = rf_roi.rf_fit_rsq.copy()
-                    roi.max_t_sta = rf_roi.max_t_sta.copy()
-                    roi.rf_max_idx = np.unravel_index(np.argmax(rf_roi.max_t_sta, axis=None), rf_roi.max_t_sta.shape)
-                    roi.rf_fit_max_idx = np.unravel_index(np.argmax(rf_roi.rf_fit, axis=None), rf_roi.rf_fit.shape)
-                    
-
-                    x = roi.rf_fit_max_idx[0]*rf_roi.stim_info['meta']['epoch_infos']['epoch_2']['x_width'] + rf_roi.stim_info['meta']['epoch_infos']['epoch_2']['x_width']/2
-                    y = roi.rf_fit_max_idx[1]*rf_roi.stim_info['meta']['epoch_infos']['epoch_2']['y_width'] + rf_roi.stim_info['meta']['epoch_infos']['epoch_2']['y_width']/2
-                    roi.distance_to_center = np.sqrt(np.square(x-rf_roi.stim_info['meta']['proj_params']['sizeX']/2) + np.square(y-rf_roi.stim_info['meta']['proj_params']['sizeY']/2))
-                
-                    
-
-        df_c['RF_fit_center'] = list(map(lambda roi : roi.rf_fit_max_idx
-                                             , curr_rois))
-        df_c['RF_map_center'] = list(map(lambda roi : roi.rf_max_idx
-                                             , curr_rois))
-        df_c['RF_map_bool'] = list(map(lambda roi : roi.rf_transfer_worked
-                                             , curr_rois))
-        df_c['RF_distance_to_center'] = list(map(lambda roi : roi.distance_to_center, 
-                                             curr_rois))
-        df_c['RF_Rsq'] = list(map(lambda roi : roi.rf_fit_rsq, 
-                                             curr_rois))
-        print('RFs found')
-    else:
-        df_c['RF_fit_center'] = np.tile(np.nan,len(curr_rois))
-        df_c['RF_map_center'] = np.tile(np.nan,len(curr_rois))
-        df_c['RF_Rsq'] =np.tile(np.nan,len(curr_rois))
-        df_c['RF_map_bool'] = np.tile(False,len(curr_rois))
-        df_c['RF_distance_to_center'] = np.tile(np.nan,len(curr_rois))
 
     data_to_extract = ['reliability','power_lum_slope','category','base_slope']
     roi_data = PyROI.data_to_list(curr_rois, data_to_extract)

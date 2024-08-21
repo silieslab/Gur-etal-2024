@@ -17,27 +17,23 @@ from scipy.stats import linregress
 import seaborn as sns
 
 #change to code directory
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import post_analysis_core as pac
 
 # plt.switch_backend('Qt5Agg') # Working with Visual Studio code, interactive plotting for ROI selection
 plt.style.use('default')
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
 results_save_dir = os.path.join(initialDirectory,'Figure4/plots')
 
 
 #%% Luminance values of the experimental setup (ADJUST THE PATHS)
 # Values from the stimulation paradigm
-measurements_f = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/luminance_measurements/210716_Ultima_Luminances_ONOFFpaper.xlsx'
+measurements_f = '.../Gur-etal-2024/2pAnalysis/luminance_measurements/210716_Ultima_Luminances_ONOFFpaper.xlsx'
 measurement_df = pd.read_excel(measurements_f,header=0)
 res = linregress(measurement_df['file_lum'], measurement_df['measured'])
-# diff_luminances = all_rois[0].luminances
-# candelas = res.intercept + res.slope*diff_luminances
-# luminances_photon = pac.convert_cd_to_photons(cdVal=candelas,wavelength=475)
 # %% Load datasets and desired variables
 exp_folder = 'SpatialPooling_Tm1_Tm9/changingGratingSize'
 data_dir = os.path.join(all_data_dir,exp_folder)
@@ -120,74 +116,6 @@ norm = matplotlib.colors.Normalize(vmin=0,
                                     vmax=35)
 norm_l = matplotlib.colors.Normalize(vmin=0, 
                                     vmax=0.6)
-
-#%% Gain analysis
-for geno in unique_genos:
-
-    fig = plt.figure(figsize=(5, 5))
-    grid = plt.GridSpec(1, 1, wspace=0.3, hspace=1)
-    
-    ax1=plt.subplot(grid[0,0])
-
-    resps = np.array([data['responses'] for data in roi_data.values() if data['geno'] == geno])
-    resps_m = np.nanmean(resps,axis=0)
-    resps_std = np.nanstd(resps,axis=0)
-    
-    gains = resps/resps_m[-1,:]
-    gain_m = np.nanmean(gains,axis=0)
-    gain_std = np.nanstd(gains,axis=0)
-
-    
-    # plot gains
-    for idx, luminance in enumerate(all_rois[0].sorted_luminances):
-        gain = gain_m[:-1,idx]
-        error = gain_std[:-1,idx]/np.sqrt(resps.shape[0])
-        ax1.errorbar(np.array(grating_sizes.values()[:-1]).astype(int),gain,error,fmt='-o',alpha=.8,
-            label=luminance,color=cmap(norm_l(luminance)))
-    ax1.set_title('{g}: {n} ROIs'.format(g=geno,n=resps.shape[0]))
-    ax1.legend(loc=4)
-    ax1.set_ylim([0,np.nanmax(gain_m)+0.05])
-    ax1.set_xlabel('space')
-    ax1.set_ylabel('gain')
-
-    ax1.plot((0,30), [1, 1], color='k', linestyle='--', linewidth=2)
-
-    save_n = '{g}_centerGratings_gainVSspace'.format(g=geno)
-    os.chdir(results_save_dir)
-    fig.savefig('%s.pdf' % save_n, bbox_inches='tight',dpi=300)
-    plt.close('all')
-
-
-    # Gain calculated via means
-    fig = plt.figure(figsize=(5, 5))
-    grid = plt.GridSpec(1, 1, wspace=0.3, hspace=1)
-    ax1=plt.subplot(grid[0,0])
-    gain_over_mean = resps_m/resps_m[0,:]
-
-    gains = resps/resps_m[0,:]
-    gain_m = np.nanmean(gains,axis=0)
-    gain_std = np.nanstd(gains,axis=0)
-
-    # plot gains
-    for idx, luminance in enumerate(all_rois[0].sorted_luminances):
-        gain = gain_m[:-1,idx]
-        error = gain_std[:-1,idx]/np.sqrt(resps.shape[0])
-        ax1.errorbar([5, 10, 15, 20, 25, 30],gain,error,fmt='-o',alpha=.8,
-            label=luminance,color=cmap(norm_l(luminance)))
-    ax1.set_title('{g}: {n} ROIs'.format(g=geno,n=resps.shape[0]))
-    ax1.legend(loc=4)
-    # ax1.set_ylim([0,np.nanmax(gain_m)+0.05])
-    ax1.set_xlabel('space')
-    ax1.set_ylabel('gain')
-
-    ax1.plot((0,35), [1, 1], color='k', linestyle='--', linewidth=2)
-
-    save_n = '{g}_centerGratings_gainVSspace_5degGain'.format(g=geno)
-    os.chdir(results_save_dir)
-    fig.savefig('%s.pdf' % save_n, bbox_inches='tight',dpi=300)
-    plt.close('all')
-
-
 
  #%% Single ROI plots
 
@@ -300,62 +228,27 @@ for geno in unique_genos:
     os.chdir(results_save_dir)
     fig.savefig('%s.pdf' % save_n, bbox_inches='tight',dpi=300)
     plt.close('all')
-
-#%% Calculate slopes
-from sklearn.utils import resample
-from scipy.stats import linregress
-slopes = {}
-rsq = {}
+#%% ANOVA
+from scipy.stats import f_oneway
 for geno in unique_genos:
+    resps = np.array([data['responses'] for data in roi_data.values() if data['geno'] == geno])
+    resps_m = np.nanmean(resps,axis=0)
+    resps_std = np.nanstd(resps,axis=0)
     
     norm_resps = np.array([data['responses_norm'] for data in roi_data.values() if data['geno'] == geno])
+    norm_resps_m = np.nanmean(norm_resps,axis=0)
+    norm_resps_std = np.nanstd(norm_resps,axis=0)
 
-    slopes[geno] = {}
-    rsq[geno] = {}
-
+    # Absolute responses
     for epoch in grating_sizes:
-        
-        rsq[geno][grating_sizes[epoch]] = []
-        slopes[geno][grating_sizes[epoch]] = []
-
-        for i in range(100):  
-            curr_resps = norm_resps[:,epoch,:]
-            boot = resample(range(curr_resps.shape[0]), replace=False, n_samples=7)
-            resp_mean = np.nanmean(curr_resps[boot,:],axis=0)
-
-            res = linregress(all_rois[0].sorted_luminances, resp_mean)
-
-            rsq[geno][grating_sizes[epoch]].append(res.rvalue**2)
-            slopes[geno][grating_sizes[epoch]].append(res.slope)
-
-
-# %%
-for geno in unique_genos:
-    fig = plt.figure(figsize=(4, 4))
-    grid = plt.GridSpec(1, 1, wspace=0.3, hspace=1)
-    
-    ax1=plt.subplot(grid[0,0])
-
-    data = np.array(slopes[geno].values())
-
-    ax1.errorbar(np.array(grating_sizes.values()[:5]).astype(int),data[:5,:].mean(axis=1),data[:5,:].std(axis=1),
-                fmt='-o',alpha=1)
-
-    if geno =='Tm1':
-        ax1.set_ylim((0,1.5))
-    elif geno =='Tm9':
-        ax1.set_ylim((-1,0))
-    save_n = '{g}_slopes_Norm'.format(g=geno)
-    os.chdir(results_save_dir)
-    fig.savefig('%s.pdf' % save_n, bbox_inches='tight',dpi=300)
-    plt.close('all')
-
-    save_n = '{g}_rsq_Norm'.format(g=geno)
-
-    sns.boxplot(data = np.array(rsq[geno].values()).T)
-    plt.savefig('%s.pdf' % save_n, bbox_inches='tight',dpi=300)
-    plt.close('all')
-
-# %%
-sns.boxplot(data = np.array(rsq['Tm1'].values()).T)
-# %%
+        resp = resps_m[epoch,:]
+        error = resps_std[epoch,:]/np.sqrt(resps.shape[0])
+        # print(geno)
+        # print(grating_sizes[epoch])
+        # print(resp)
+        # print(error)
+        anova_array = resps[:,epoch,:]
+        good_rows = ~np.isnan(np.array(anova_array))[:,0]
+        anova_array = anova_array[good_rows,:]
+        # #anova
+        F, p = f_oneway(anova_array[:,0], anova_array[:,1], anova_array[:,2],anova_array[:,3],anova_array[:,4])

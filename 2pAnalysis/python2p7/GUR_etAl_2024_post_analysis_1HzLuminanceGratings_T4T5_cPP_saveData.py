@@ -17,21 +17,19 @@ from scipy.stats import linregress, spearmanr
 from sklearn import preprocessing
 
 #change to code directory / update this for yourself
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import ROI_mod
 import post_analysis_core as pac
 
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
-
 dataDir = os.path.join(all_data_dir, 'T4_T5_luminanceGain','luminance_gratings') # Raw data folder: "T4_T5_luminanceGain", change reliability in the following code to 0.4
 
 #%% Luminance values of the experimental setup (ADJUST THE PATHS)
 # Values from the stimulation paradigm
-measurements_f = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx'
+measurements_f = '.../Gur-etal-2024/2pAnalysis/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx'
 measurement_df = pd.read_excel(measurements_f,header=0)
 res = linregress(measurement_df['file_lum'], measurement_df['measured'])
 
@@ -58,10 +56,7 @@ for dataset in datasets_to_load:
     if 'lightBG' in curr_rois[0].stim_name:
         curr_stim_type = 'dark background'
         continue
-    # if 'darkBG' in curr_rois[0].stim_name:
-    #     curr_stim_type = 'bright background'
-    #     continue
-    
+  
     # Reliability thresholding
     curr_rois = ROI_mod.analyze_luminance_gratings_t45(curr_rois)
     curr_rois = ROI_mod.threshold_ROIs(curr_rois, {'reliability':0.4})

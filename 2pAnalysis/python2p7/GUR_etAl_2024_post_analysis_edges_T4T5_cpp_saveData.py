@@ -17,14 +17,13 @@ import os
 from scipy.stats import linregress
 
 #change to code directory
-os.chdir('/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code/code/python2p7/common')
+os.chdir('.../Gur-etal-2024/2pAnalysis/python2p7/common')
 
 import ROI_mod
 import post_analysis_core as pac
 
 #%% Directories for loading data and saving figures (ADJUST THEM TO YOUR PATHS)
-initialDirectory = '/Volumes/Backup Plus/Post-Doc/_SiliesLab/Manuscripts/2023_Lum_Gain/Data_code'
-# initialDirectory = '/Volumes/HD-SP1/Burak_data/Python_data'
+initialDirectory = 'data_path'
 all_data_dir = os.path.join(initialDirectory, 'raw_data')
 allData = os.path.join(all_data_dir, 'T4_T5_luminanceGain',
                              'luminance_edges') # Raw data folder: "T4_T5_luminanceGain/luminance_edges"
@@ -38,7 +37,7 @@ roi_plots=False
 
 #%% Luminances
 # Values from the stimulation paradigm
-measurements_f = '/Users/burakgur/Documents/GitHub/python_lab/2p_calcium_imaging/200622_Investigator_Luminances_LumGainPaper.xlsx'
+measurements_f = '.../Gur-etal-2024/2pAnalysis/luminance_measurements/200622_Investigator_Luminances_LumGainPaper.xlsx'
 measurement_df = pd.read_excel(measurements_f,header=0)
 res = linregress(measurement_df['file_lum'], measurement_df['measured'])
 # %% Load datasets and desired variables
@@ -111,27 +110,7 @@ for dataset in datasets_to_load:
 
     df_c = {}
     df_c['depth'] = depths
-    if "RF_map_norm" in curr_rois[0].__dict__.keys():
-        df_c['RF_map_center'] = list(map(lambda roi : (roi.RF_map_norm>0.95).astype(int)
-                                             , curr_rois))
-        df_c['RF_map_bool'] = np.tile(True,len(curr_rois))
-        screen = np.zeros(np.shape(curr_rois[0].RF_map))
-        screen[np.isnan(curr_rois[0].RF_map)] = -0.1
-        
-        
-        for roi in curr_rois:
-            curr_map = (roi.RF_map_norm>0.95).astype(int)
     
-            x1,x2 = ndimage.measurements.center_of_mass(curr_map)
-            s1,s2 = ndimage.measurements.center_of_mass(np.ones(shape=screen.shape))
-            roi.distance_to_center = np.sqrt(np.square(x1-s1) + np.square(x2-s2))
-        df_c['RF_distance_to_center'] = list(map(lambda roi : roi.distance_to_center, 
-                                             curr_rois))
-        print('RFs found')
-    else:
-        df_c['RF_map_center'] = np.tile(None,len(curr_rois))
-        df_c['RF_map_bool'] = np.tile(False,len(curr_rois))
-        df_c['RF_distance_to_center'] = np.tile(np.nan,len(curr_rois))
             
     df_c['slope'] = roi_data['slope']
     df_c['SNR'] = roi_data['SNR']
@@ -281,7 +260,6 @@ for idx, geno in enumerate(np.unique(combined_df['Geno'])):
                                                    st=curr_stim_type,
                                                    geno=geno,
                                                    addition = fig_addition)
-    os.chdir(summary_save_dir)
     plt.savefig('%s.pdf' % save_name, bbox_inches='tight',dpi=300)
     #%% Save data
     output_dir = os.path.join(initialDirectory, 'Figure1','processed_data')
